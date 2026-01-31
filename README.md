@@ -40,7 +40,54 @@ This solution provides a runnable Spring Boot setup that instruments Spring AI w
    - Engineers inspect prompts, responses, latency, cost, and errors in the Langfuse UI.
 
 ---
+## Quickstart (Docker Compose)
 
+1. Create a local `.env` file for the app (copy from `ops/app.env.example`):
+   ```bash
+   cp ops/app.env.example ops/app.env
+   ```
+   Set `SPRING_AI_OPENAI_API_KEY` (or a compatible provider key if you swap providers).
+
+2. Start the full stack:
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. Wait for Langfuse UI to become ready, then open:
+   - Langfuse UI: http://localhost:3000
+
+4. Generate traffic to create traces:
+   ```bash
+   curl -s "http://localhost:8080/api/chat?msg=Summarize%20the%20OTEL%20trace%20flow%20in%201%20sentence"
+   ```
+
+## What you should see in Langfuse
+
+- A trace with a root span named `http.server.request`
+- A nested span named `genai.chat`
+- Span attributes including:
+  - `gen_ai.system=openai`
+  - `gen_ai.operation.name=chat`
+  - `gen_ai.request.model` (if configured)
+  - `gen_ai.usage.prompt_tokens` / `gen_ai.usage.completion_tokens` / `gen_ai.usage.total_tokens` (best-effort; depends on provider response)
+- Optional Langfuse-native mapping attributes:
+  - `langfuse.trace.userId`
+  - `langfuse.trace.sessionId`
+  - `langfuse.trace.tags.*`
+
+## Layout
+
+- `app/` Spring Boot service (HTTP endpoint + Spring AI call + OTEL SDK exporter)
+- `ops/` Docker Compose stack + env examples
+- `evidence/` Evidence pack placeholders (logs, screenshots, checklist)
+
+## Notes
+
+- Langfuse OTEL ingestion endpoint: `/api/public/otel` over **HTTP/protobuf** (no gRPC).  
+- Auth is **Basic Auth** using `publicKey:secretKey` base64-encoded as `Authorization: Basic <AUTH_STRING>`.  
+  For local defaults in this project: `AUTH_STRING=cGstbGYtbG9jYWw6c2stbGYtbG9jYWw=`
+
+  
 ## 3) Runnable Implementation
 
 ### Project structure
