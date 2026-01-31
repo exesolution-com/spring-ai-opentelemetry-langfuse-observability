@@ -17,7 +17,7 @@ Teams struggle to answer basic operational questions:
 Standard APM tools capture HTTP spans but miss LLM-specific context (prompt, model, tokens, cost). Without structured tracing, root-cause analysis and cost governance are impractical.
 
 ---
-View [Full runnable solution here]([https://exesolution.com](https://exesolution.com/solutions/spring-ai-opentelemetry-langfuse-observability))
+View [Full runnable solution here](https://exesolution.com/solutions/spring-ai-opentelemetry-langfuse-observability)
 ## 2) Solution Overview (trace flow: app → OTEL → Langfuse)
 
 This solution provides a runnable Spring Boot setup that instruments Spring AI with OpenTelemetry and exports traces to a **self-hosted Langfuse** stack.
